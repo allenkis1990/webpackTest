@@ -11,8 +11,10 @@ const glob = require('glob');
 const PurifyCSSPlugin = require('purifycss-webpack');
 module.exports = {
     entry: {
+        //main1 main2都有 jquery的
         main: './src/js/index.js',
-        assets:['./src/assets/jquery-1.9.1.min.js','./src/assets/vue-validator.min.js']//把两个库打包成assets.js
+        main2: './src/js/index2.js',
+        //jquery:['./src/assets/jquery-1.9.1.min.js']
     },
     output:{
         path:path.resolve(__dirname,'dist'),
@@ -77,7 +79,25 @@ module.exports = {
         extensions: ['.js', '.vue', '.json','.less'],
         modules: ["src", "node_modules"]//添加node_modules否则运行webpack-dev-server报错
     },
+    optimization: {
+        splitChunks: {
+            cacheGroups: {
+                common: {
+                    chunks:'all',
+                    name: 'common',
+                    priority: 10,
+                    enforce: true,
+                    minChunks:2//最小被引用两次的公共库才被抽离到公共代码
+                }
+            }
+        }
+    },
     plugins: [
+
+        /*//在这边配置全局引入后哪个模块不用require都可以用
+        new webpack.ProvidePlugin({
+            $:'jquery'
+        }),*/
         new CleanWebpackPlugin(['./dist']),//删除文件夹插件
         //设置成disable:true就不会抽离CSS(抽离css不会自动更新页面样式)
         new ExtractTextWebpackPlugin1({filename:'css/style.css',disable:true}),
