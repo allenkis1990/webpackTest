@@ -71,6 +71,32 @@ module.exports = {
                         }
                     ]
                 })
+            },
+            //解析并且正确引入打包后的图片file-loader和url-loader功能一样url多了一个转base64 功能
+            {
+                test:/\.(gif|png|jpg|svg)/,
+                use:{
+                    loader:'url-loader',
+                    options: {
+                        outputPath:'images',
+                        name:'[name].[hash:8].[ext]',
+                        limit:1024*8//小于8KB会被转成base64
+                    }
+                }
+            },
+            //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取
+            {
+                test:/\.(html|htm)/,
+                loader:'html-withimg-loader'
+            },
+            {
+                test:/\.js/,
+                use:{
+                    loader:'babel-loader',
+                    query:{
+                        presets:['env','stage-0','react']//把es6 es7转成es语法
+                    }
+                }
             }
         ]
     },
