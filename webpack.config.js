@@ -1,3 +1,4 @@
+//console.log(process.env.mode);//在cmd里输入set mode=xxx设置env.mode如果想清空就是set mode=
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
