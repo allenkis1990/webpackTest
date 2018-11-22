@@ -10,13 +10,15 @@ require('../less/style1.less');
 function a(){
     return new Promise((resolve,reject)=>{
         setTimeout(()=>{
-            resolve('haha');
+            resolve('haha111');
         },2000)
     })
 }
 a().then((data)=>{
     console.log(data);
 })
+const haha = require('haha');
+console.log(haha,'hahahehe');
 document.getElementsByTagName('p')[0].innerText = obj.name;
 if(module.hot){
     module.hot.accept();

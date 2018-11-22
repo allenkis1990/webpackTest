@@ -10,6 +10,10 @@ const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
 
 const glob = require('glob');
 const PurifyCSSPlugin = require('purifycss-webpack');
+const OptimizeCssnanoPlugin = require('@intervolga/optimize-cssnano-plugin');
+//const uglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
+const copyWebpackPlugin = require('copy-webpack-plugin');
+//const haha = require('./src/haha');//找haha文件如果没有就找哈哈文件夹package.json找main或者module配置的映射
 module.exports = {
     entry: {
         //main1 main2都有 jquery的
@@ -23,6 +27,20 @@ module.exports = {
         publicPath: ""
         //publicPath:"dist"//页面上引入的路径 比如js/xxx就会变成dist/js/xxx
     },
+    resolve: {
+        //import时可以省去后缀名js vue json默认require先找.js从左到右
+        //作用于项目中，webpack配置文件中无法使用
+        extensions: ['.js', '.vue', '.json','.less'],
+        //require('xxx')先去src目录下找没有才去node_modules从左到右
+        //作用于项目中，webpack配置文件中无法使用
+        modules: [path.resolve("node_modules"),path.resolve("src")],
+        //原本在文件夹里去找package.json只会找main和module现在fuck和shit也会去找优先级从左到右
+        mainFields:['main','module','fuck','shit'],
+        //给引入的模块取个别名可以是文件全路径也可以是文件夹
+        alias:{
+            'lwh':path.resolve('./src/assets/lwh.js')
+        }
+    },
     //devServer自动刷新的代码存在内存中
     //打包后文件的内存路径 = devServer.contentBase + output.publicPath + output.filename，只能通过浏览器来访问这个路由来访问内存中的bundle
     //使用webpack打包更新的文件硬盘路径 = output.path + output.filename
@@ -34,7 +52,16 @@ module.exports = {
         hot:true,//热更新配合new webpack.HotModuleReplacementPlugin()使用
         contentBase:'./dist'//devServer.contentBase + output.publicPath + output.filename = ./dist/js/xx
     },
+    watch:false,
+    watchOptions: {
+        ignored: /node_modules/,
+        poll: 1000,//每多少秒询问一次
+        aggregateTimeout: 1000//发现改动后多少秒执行打包
+    },
+    devtool:'source-map',//在--mode production模式下也能精准定位报错位置
     module:{
+        //不去解析的文件
+        noParse: [/lwh\.js/],
         rules:[
             {
                 test:/\.css$/,
@@ -51,7 +78,9 @@ module.exports = {
                         },
                         {loader:'postcss-loader'}//配合postcss.config文件来加CSS前缀
                     ]
-                })
+                }),
+                exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
+                include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },
             {
                 test:/\.less/,
@@ -70,8 +99,10 @@ module.exports = {
                         {
                             loader:"less-loader"
                         }
-                    ]
-                })
+                    ],
+                }),
+                exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
+                include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },
             //解析并且正确引入打包后的图片file-loader和url-loader功能一样url多了一个转base64 功能
             {
@@ -83,7 +114,9 @@ module.exports = {
                         name:'[name].[hash:8].[ext]',
                         limit:1024*8//小于8KB会被转成base64
                     }
-                }
+                },
+                exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
+                include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },
             //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取
             {
@@ -100,11 +133,6 @@ module.exports = {
                 }
             }
         ]
-    },
-    resolve: {
-        //import时可以省去后缀名js vue json
-        extensions: ['.js', '.vue', '.json','.less'],
-        modules: ["src", "node_modules"]//添加node_modules否则运行webpack-dev-server报错
     },
     optimization: {
         splitChunks: {
@@ -127,13 +155,30 @@ module.exports = {
         }),*/
         new CleanWebpackPlugin(['./dist']),//删除文件夹插件
         //设置成disable:true就不会抽离CSS(抽离css不会自动更新页面样式)
-        new ExtractTextWebpackPlugin1({filename:'css/style.css',disable:true}),
+        new ExtractTextWebpackPlugin1({filename:'css/style.css',disable:false}),
         //new ExtractTextWebpackPlugin2({filename:'less/style.css'}),
-        //清除没用到的样式，只有在抽离css的模式生效指定的是模板html文件
+        //清除没用到的样式，只有在抽离css的模式生效,指定的是模板html文件
         new PurifyCSSPlugin({
             // Give paths to parse for rules. These should be absolute!
             paths: glob.sync(path.join(__dirname, './*.html')),
         }),
+        //css压缩
+        new OptimizeCssnanoPlugin({
+            sourceMap: true,
+            cssnanoOptions: {
+                preset: ['default', {
+                    discardComments: {
+                        removeAll: true,
+                    }
+                }]
+            },
+        }),
+        //复制文件夹文件
+        new copyWebpackPlugin([
+            {from:path.resolve(__dirname,'./copy1'),to:path.resolve(__dirname,'./dist/copy1')},
+            {from:path.resolve(__dirname,'./copy2'),to:path.resolve(__dirname,'./dist/copy2')}
+        ]),
+        //new uglifyjsWebpackPlugin(),//webpack4会对JS进行自动压缩
         new webpack.HotModuleReplacementPlugin(),
         //指定html位置指定后打包的js会自动被引入
         new HtmlWebpackPlugin({
