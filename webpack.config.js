@@ -1,3 +1,5 @@
+// "@intervolga/optimize-cssnano-plugin": "^1.0.6", 不知道为何json依赖后报错
+// "cssnano": "^4.1.7",
 //console.log(process.env.mode);//在cmd里输入set mode=xxx设置env.mode如果想清空就是set mode=
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -38,7 +40,8 @@ module.exports = {
         mainFields:['main','module','fuck','shit'],
         //给引入的模块取个别名可以是文件全路径也可以是文件夹
         alias:{
-            'lwh':path.resolve('./src/assets/lwh.js')
+            'lwh':path.resolve('./src/assets/lwh.js'),
+            'fuck':path.resolve('./node_modules')
         }
     },
     //devServer自动刷新的代码存在内存中
@@ -137,14 +140,28 @@ module.exports = {
     optimization: {
         splitChunks: {
             cacheGroups: {
-                common: {
-                    chunks:'all',
-                    name: 'common',
+                vendor: {
+                    chunks: 'initial',// 只对入口文件处理
+                    test: /node_modules/,
+                    name: 'vendor',
+                    priority: 10,
+                    enforce: true,
+                    minChunks:2//最小被引用两次的公共库才被抽离到公共代码
+                },
+                assets: {
+                    chunks: 'initial',// 只对入口文件处理
+                    test: path.resolve('./src/assets'),
+                    name: 'assets',
                     priority: 10,
                     enforce: true,
                     minChunks:2//最小被引用两次的公共库才被抽离到公共代码
                 }
+
             }
+        },
+        //抽取webpack运行文件代码
+        runtimeChunk: {
+            name: 'manifest'
         }
     },
     plugins: [
@@ -178,6 +195,10 @@ module.exports = {
             {from:path.resolve(__dirname,'./copy1'),to:path.resolve(__dirname,'./dist/copy1')},
             {from:path.resolve(__dirname,'./copy2'),to:path.resolve(__dirname,'./dist/copy2')}
         ]),
+        //引入动态链接库生成的映射文件
+        new webpack.DllReferencePlugin({
+            manifest:path.resolve('./src/assets','manifest.json')
+        }),
         //new uglifyjsWebpackPlugin(),//webpack4会对JS进行自动压缩
         new webpack.HotModuleReplacementPlugin(),
         //指定html位置指定后打包的js会自动被引入

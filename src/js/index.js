@@ -1,11 +1,15 @@
 import {obj} from '../services/data1.js';
 import $ from 'jquery';
+require('lwh');
 //var $ = require('jquery');
 //把css以后style的形式插入到页面上
 //import '../style/style1.css';
 console.log($);
 require('../style/style1.css');
 require('../less/style1.less');
+let fuck = require('fuck/jquery/dist/jquery.js');
+console.log(fuck,'fuck');
+
 //console.log(obj);
 function a(){
     return new Promise((resolve,reject)=>{
