@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 //分成两个CSS文件
 const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
 //const ExtractTextWebpackPlugin2 = require('extract-text-webpack-plugin');
@@ -10,7 +11,7 @@ module.exports = {
     //使用webpack打包更新的文件硬盘路径 = output.path + output.filename
     // devServer: {
     //     host:'127.0.0.1',
-    //     port:'8080',
+    //     port:'8081',
     //     //open:true,
     //     hotOnly:true,
     //     hot:true,//热更新配合new webpack.HotModuleReplacementPlugin()使用
@@ -61,10 +62,12 @@ module.exports = {
             }
         ]
     },
+    // mode:'development',
     plugins:[
         //设置成disable:false就不会抽离CSS(抽离css不会自动更新页面样式)
         //new ExtractTextWebpackPlugin1({filename:'css/style.css'}),
         //new ExtractTextWebpackPlugin2({filename:'less/style.css'}),
-        new webpack.HotModuleReplacementPlugin()
+        new webpack.HotModuleReplacementPlugin(),
+        new FriendlyErrorsPlugin()
     ]
 }

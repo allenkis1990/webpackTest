@@ -5,6 +5,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+var ProgressBarPlugin = require('progress-bar-webpack-plugin');//构建进度条插件
 //分成两个CSS文件
 // const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
 //const ExtractTextWebpackPlugin2 = require('extract-text-webpack-plugin');
@@ -19,7 +20,7 @@ module.exports = {
     entry: {
         //main1 main2都有 jquery的
         main: './src/js/index.js',
-        main2: './src/js/index2.js'
+        main2: './src/js/index2.js',
         //jquery:['./src/assets/jquery-1.9.1.min.js']
     },
     output:{
@@ -105,11 +106,11 @@ module.exports = {
                 exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
                 include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },
-            //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取
-            {
-                test:/\.(html|htm)/,
-                loader:'html-withimg-loader'
-            },
+            //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取 可用express静态资源解决
+            // {
+            //     test:/\.(html|htm)/,
+            //     loader:'html-withimg-loader'
+            // },
             // env（替代es2015那些），stage-0，transform-runtime垫片
             {
                 test:/\.js/,
@@ -198,6 +199,7 @@ module.exports = {
                 removeAttributeQuotes: true, // 移除属性的引号
                 collapseWhitespace:true//html片段变成一行
             }
-        })
+        }),
+        new ProgressBarPlugin()
     ]
 }

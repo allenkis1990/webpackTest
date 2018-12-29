@@ -6,20 +6,28 @@ let webpackConfig = process.env.NODE_ENV === 'production' ?
     require('./webpack.pro.config') :
     require('./webpack.dev.config');
 const webpackBaseConfig = require('./webpack.base.config');
+webpackConfig.mode = 'development'
+if(process.env.NODE_ENV === 'development'){
+    Object.keys(webpackBaseConfig.entry).forEach(function (name) {
+        webpackBaseConfig.entry[name] = ['./dev-client'].concat(webpackBaseConfig.entry[name])
+    })
+}
 let finallyConfig = merge(webpackBaseConfig,webpackConfig);
 var compiler = webpack(finallyConfig)
 
 
 //////////////////////热更新////////////////////////////
 // 开发环境下加自动刷新的entry
-if(process.env.NODE_ENV === 'development'){
-    Object.keys(webpackBaseConfig.entry).forEach(function (name) {
-        webpackBaseConfig.entry[name] = ['webpack-hot-middleware/client?noInfo=true&reload=true'].concat(webpackBaseConfig.entry[name])
-    })
-}
+// index.html无法热更新
 var hotMiddleware = require('webpack-hot-middleware')(compiler, {
     log: () => {}
 })
+// compiler.plugin('compilation', function (compilation) {
+//     compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
+//         hotMiddleware.publish({ action: 'reload' })
+//         cb()
+//     })
+// })
 app.use(hotMiddleware);
 //////////////////////热更新////////////////////////////
 
@@ -27,7 +35,8 @@ app.use(hotMiddleware);
 //////////////////////开发服务器配置////////////////////////////
 var devMiddleware = require('webpack-dev-middleware')(compiler, {
     publicPath: '/',
-    quiet: true
+    quiet: true,
+    noInfo: true
 })
 app.use(devMiddleware);
 //////////////////////开发服务器配置////////////////////////////
@@ -49,6 +58,10 @@ Object.keys(proxyList).forEach(function (context) {
     app.use(proxyMiddleware(context, options))
 })
 //////////////////////代理////////////////////////////
+
+
+// 静态资源
+app.use('/src', express.static('./src'))
 
 // 启动服务
 app.listen('8081');

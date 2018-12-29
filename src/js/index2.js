@@ -9,7 +9,7 @@
 // }
 // let liu = new Liu('lwh',18)
 // liu.say()
-console.log(1222);
+console.log(1111111);
 let p = new Promise((resolve,reject)=>{
     resolve('haha');
 })
