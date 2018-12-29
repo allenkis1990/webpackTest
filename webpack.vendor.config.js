@@ -2,7 +2,7 @@ let path = require('path');
 let webpack = require('webpack');
 module.exports = {
     entry:{
-        vueAll:['vue','vue-router']
+        vueAll:['./node_modules/vue/dist/vue.min.js']
     },
     output:{
         //生成动态链接库JS

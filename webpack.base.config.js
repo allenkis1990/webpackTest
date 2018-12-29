@@ -6,10 +6,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 //分成两个CSS文件
-const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
+// const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
 //const ExtractTextWebpackPlugin2 = require('extract-text-webpack-plugin');
 //分成两个CSS文件
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");//提取css到单独文件的插件
+// const MiniCssExtractPlugin = require("mini-css-extract-plugin");//提取css到单独文件的插件
 const glob = require('glob');
 const PurifyCSSPlugin = require('purifycss-webpack');
 //const uglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
@@ -19,7 +19,7 @@ module.exports = {
     entry: {
         //main1 main2都有 jquery的
         main: './src/js/index.js',
-        main2: './src/js/index2.js',
+        main2: './src/js/index2.js'
         //jquery:['./src/assets/jquery-1.9.1.min.js']
     },
     output:{
@@ -27,6 +27,10 @@ module.exports = {
         filename:'js/[name].[hash:8].bundle.js',
         publicPath: ""
         //publicPath:"dist"//页面上引入的路径 比如js/xxx就会变成dist/js/xxx
+    },
+    externals: {
+        // 使用动态连接库的VUE模块，这样就可以直接在项目中require('Vue')使用 webpack不会进行打包
+        'Vue': 'window._dll_vueAll(\'./node_modules/vue/dist/vue.min.js\')'
     },
     resolve: {
         //import时可以省去后缀名js vue json默认require先找.js从左到右
@@ -40,7 +44,8 @@ module.exports = {
         //给引入的模块取个别名可以是文件全路径也可以是文件夹
         alias:{
             'lwh':path.resolve('./src/assets/lwh.js'),
-            'fuck':path.resolve('./node_modules')
+            'fuck':path.resolve('./node_modules'),
+            '@':path.resolve('./src')
         }
     },
     devtool:'source-map',//在--mode production模式下也能精准定位报错位置
@@ -105,14 +110,29 @@ module.exports = {
                 test:/\.(html|htm)/,
                 loader:'html-withimg-loader'
             },
+            // env（替代es2015那些），stage-0，transform-runtime垫片
             {
                 test:/\.js/,
                 use:{
                     loader:'babel-loader',
                     query:{
-                        presets:['env','stage-0','react']//把es6 es7转成es语法
+                        presets:['env','stage-0','react'],//把es6 es7转成es语法
+                        plugins: [
+                            [
+                                'transform-runtime',
+                                {
+                                    corejs: true,
+                                    helpers: true,
+                                    regenerator: true,
+                                    useESModules: true,
+                                    moduleName: 'babel-runtime'
+                                }
+                            ]
+                        ]
                     }
-                }
+                },
+                // 不设置这个会报错
+                exclude: /node_modules/
             }
         ]
     },
@@ -125,7 +145,7 @@ module.exports = {
                     name: 'vendor',
                     priority: 10,
                     enforce: true,
-                    minChunks:2//最小被引用两次的公共库才被抽离到公共代码
+                    minChunks:1//最小被引用两次的公共库才被抽离到公共代码
                 },
                 assets: {
                     chunks: 'initial',// 只对入口文件处理
@@ -133,7 +153,7 @@ module.exports = {
                     name: 'assets',
                     priority: 10,
                     enforce: true,
-                    minChunks:2//最小被引用两次的公共库才被抽离到公共代码
+                    minChunks:1//最小被引用两次的公共库才被抽离到公共代码
                 }
 
             }

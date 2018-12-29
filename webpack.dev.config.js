@@ -8,14 +8,14 @@ module.exports = {
     //devServer自动刷新的代码存在内存中
     //打包后文件的内存路径 = devServer.contentBase + output.publicPath + output.filename，只能通过浏览器来访问这个路由来访问内存中的bundle
     //使用webpack打包更新的文件硬盘路径 = output.path + output.filename
-    devServer: {
-        host:'127.0.0.1',
-        port:'8080',
-        //open:true,
-        hotOnly:true,
-        hot:true,//热更新配合new webpack.HotModuleReplacementPlugin()使用
-        contentBase:'./dist'//devServer.contentBase + output.publicPath + output.filename = ./dist/js/xx
-    },
+    // devServer: {
+    //     host:'127.0.0.1',
+    //     port:'8080',
+    //     //open:true,
+    //     hotOnly:true,
+    //     hot:true,//热更新配合new webpack.HotModuleReplacementPlugin()使用
+    //     contentBase:'./dist'//devServer.contentBase + output.publicPath + output.filename = ./dist/js/xx
+    // },
     watch:false,
     watchOptions: {
         ignored: /node_modules/,
