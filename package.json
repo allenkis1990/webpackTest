@@ -29,6 +29,7 @@
     "file-loader": "^2.0.0",
     "friendly-errors-webpack-plugin": "^1.7.0",
     "glob": "^7.1.3",
+    "happypack": "^5.0.0",
     "hot-module-replacement": "^3.0.1",
     "html-webpack-plugin": "^3.2.0",
     "html-withimg-loader": "^0.1.16",
@@ -42,14 +43,15 @@
     "purify-css": "^1.2.5",
     "purifycss-webpack": "^0.7.0",
     "style-loader": "^0.23.1",
-    "uglifyjs-webpack-plugin": "^2.0.1",
+    "uglifyjs-webpack-plugin": "^2.1.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.25.1",
     "webpack-cli": "^3.1.2",
     "webpack-dev-middleware": "^3.4.0",
     "webpack-dev-server": "^3.1.10",
     "webpack-hot-middleware": "^2.24.3",
-    "webpack-merge": "^4.1.4"
+    "webpack-merge": "^4.1.4",
+    "webpack-parallel-uglify-plugin": "^1.1.0"
   },
   "dependencies": {
     "ansi-html": "0.0.7",

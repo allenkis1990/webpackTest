@@ -6,6 +6,7 @@ const ExtractTextWebpackPlugin1 = require('extract-text-webpack-plugin');
 //const ExtractTextWebpackPlugin2 = require('extract-text-webpack-plugin');
 //分成两个CSS文件
 module.exports = {
+    devtool:'source-map',//在--mode production模式下也能精准定位报错位置
     //devServer自动刷新的代码存在内存中
     //打包后文件的内存路径 = devServer.contentBase + output.publicPath + output.filename，只能通过浏览器来访问这个路由来访问内存中的bundle
     //使用webpack打包更新的文件硬盘路径 = output.path + output.filename

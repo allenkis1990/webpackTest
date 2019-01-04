@@ -1,5 +1,7 @@
+
 import {obj} from '../services/data1.js';
 import $ from 'jquery';
+console.log('当前是否开发环境'+dev);
 require('lwh');
 //var $ = require('jquery');
 //把css以后style的形式插入到页面上

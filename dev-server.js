@@ -38,6 +38,11 @@ var devMiddleware = require('webpack-dev-middleware')(compiler, {
     quiet: true,
     noInfo: true
 })
+// console.log(typeof devMiddleware);//fn
+// app.use(function(req,res,next){
+//     console.log(1);
+//     next()
+// })
 app.use(devMiddleware);
 //////////////////////开发服务器配置////////////////////////////
 

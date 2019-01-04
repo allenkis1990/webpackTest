@@ -38,7 +38,7 @@ console.log(new Vue({
 require('lwh');
 console.log($);
 //require('../../out.css');
-// console.log(fuck);报错
+console.log(fuck);//报错
 if(module.hot){
     module.hot.accept();
 }

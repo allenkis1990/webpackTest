@@ -16,6 +16,7 @@ const PurifyCSSPlugin = require('purifycss-webpack');
 //const uglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin');
 const copyWebpackPlugin = require('copy-webpack-plugin');
 //const haha = require('./src/haha');//找haha文件如果没有就找哈哈文件夹package.json找main或者module配置的映射
+const Happypack = require('happypack')
 module.exports = {
     entry: {
         //main1 main2都有 jquery的
@@ -49,7 +50,6 @@ module.exports = {
             '@':path.resolve('./src')
         }
     },
-    devtool:'source-map',//在--mode production模式下也能精准定位报错位置
     module:{
         //不去解析的文件
         noParse: [/lwh\.js/],
@@ -107,31 +107,32 @@ module.exports = {
                 include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },
             //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取 可用express静态资源解决
-            // {
-            //     test:/\.(html|htm)/,
-            //     loader:'html-withimg-loader'
-            // },
+            {
+                test:/\.(html|htm)/,
+                loader:'html-withimg-loader'
+            },
             // env（替代es2015那些），stage-0，transform-runtime垫片
             {
                 test:/\.js/,
-                use:{
-                    loader:'babel-loader',
-                    query:{
-                        presets:['env','stage-0','react'],//把es6 es7转成es语法
-                        plugins: [
-                            [
-                                'transform-runtime',
-                                {
-                                    corejs: true,
-                                    helpers: true,
-                                    regenerator: true,
-                                    useESModules: true,
-                                    moduleName: 'babel-runtime'
-                                }
-                            ]
-                        ]
-                    }
-                },
+                use: ['happypack/loader?id=babel'],
+                // use:{
+                //     loader:'babel-loader',
+                //     query:{
+                //         presets:['env','stage-0','react'],//把es6 es7转成es语法
+                //         plugins: [
+                //             [
+                //                 'transform-runtime',
+                //                 {
+                //                     corejs: true,
+                //                     helpers: true,
+                //                     regenerator: true,
+                //                     useESModules: true,
+                //                     moduleName: 'babel-runtime'
+                //                 }
+                //             ]
+                //         ]
+                //     }
+                // },
                 // 不设置这个会报错
                 exclude: /node_modules/
             }
@@ -197,9 +198,38 @@ module.exports = {
             title:'lwh-webpack-test',
             minify: {
                 removeAttributeQuotes: true, // 移除属性的引号
-                collapseWhitespace:true//html片段变成一行
+                collapseWhitespace:true,//html片段变成一行
+                removeComments: true
             }
+            // chunks:[]按需映入入口JS
         }),
-        new ProgressBarPlugin()
+        new ProgressBarPlugin(),
+        new webpack.DefinePlugin({
+            dev:process.env.NODE_ENV==='development'?true:false
+        }),
+        new Happypack({
+            //ID是标识符的意思，ID用来代理当前的happypack是用来处理一类特定的文件的
+            id: 'babel',
+            use:[{
+                loader:'babel-loader',
+                query:{
+                    presets:['env','stage-0','react'],//把es6 es7转成es语法
+                    plugins: [
+                        [
+                            'transform-runtime',
+                            {
+                                corejs: true,
+                                helpers: true,
+                                regenerator: true,
+                                useESModules: true,
+                                moduleName: 'babel-runtime'
+                            }
+                        ]
+                    ]
+                }
+            }],
+            threads: 3,//你要开启多少个子进程去处理这一类型的文件
+            verbose: true//是否要输出详细的日志 verbose
+        })
     ]
 }

@@ -2,8 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");//提取css到单独文件的插件
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');//压缩css插件
-
+//压缩js会去除声明了但是没有用到的代码
+const UglifyJsPlugin = require("uglifyjs-webpack-plugin")
+const WebpackParallelUglifyPlugin = require('webpack-parallel-uglify-plugin')
 module.exports = {
+    // devtool:'cheap-module-eval-source-map',//开启sourceMap会导致产出的JS容量变大并且无法去除console
     module:{
         rules:[
             {
@@ -39,12 +42,40 @@ module.exports = {
             }
         ]
     },
+    optimization: {
+        minimizer: [
+            new OptimizeCssAssetsPlugin(),
+            // new UglifyJsPlugin({
+            //     // parallel: true, // 开启并行压缩，充分利用cpu
+            //     // sourceMap: true,
+            //     // extractComments: false, // 移除注释
+            //     uglifyOptions: {
+            //         compress: {
+            //             drop_debugger: true,
+            //             drop_console: true
+            //         }
+            //     }
+            // })
+        ]
+    },
     plugins:[
-        //抽取CSS
         new MiniCssExtractPlugin({
             filename: "css/style.css",
             chunkFilename: "css/style.[hash:8].css"}),
-        //css压缩
-        new OptimizeCssAssetsPlugin(),
+        new WebpackParallelUglifyPlugin({
+            uglifyJS: {
+                output: {
+                    beautify: false, //不需要格式化
+                    comments: false //不保留注释
+                },
+                compress: {
+                    warnings: false, // 在UglifyJs删除没有用到的代码时不输出警告
+                    drop_console: true, // 删除所有的 `console` 语句，可以兼容ie浏览器
+                    collapse_vars: true, // 内嵌定义了但是只用到一次的变量
+                    reduce_vars: true // 提取出出现多次但是没有定义成变量去引用的静态值
+                }
+            }
+        })
+        //抽取CSS
     ]
 }
