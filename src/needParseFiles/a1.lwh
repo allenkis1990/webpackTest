@@ -1,0 +1,12 @@
+<lwhView>
+    <button class="lwhView">lwhLoaderView!!!</button>
+</lwhView>
+<style>
+    .lwhView{background:green;}
+</style>
+<script>
+    let lwhView = document.querySelector('.lwhView')
+    lwhView.addEventListener('click',function(){
+        console.log('lwhView');
+    })
+</script>

@@ -35,7 +35,7 @@ console.log(new Vue({
         fuck:'lwh'
     }
 }),'vue!');
-require('lwh');
+// require('lwh');
 console.log($);
 //require('../../out.css');
 console.log(fuck);//报错

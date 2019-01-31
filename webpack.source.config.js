@@ -8,7 +8,7 @@ console.log(process.env.NODE_ENV);
 let webpackConfig = process.env.NODE_ENV === 'production' ?
                     require('./webpack.pro.config') :
                     require('./webpack.dev.config');
-const webpackBaseConfig = require('./webpack.base.config');
+const webpackBaseConfig = require('./webpack.sourceBase.config');
 // let fs = require('fs')
 // let f = fs.readFileSync('./lwh.txt','utf-8')
 // console.log(f,'8888');

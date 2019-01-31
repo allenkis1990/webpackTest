@@ -50,6 +50,13 @@ module.exports = {
             '@':path.resolve('./src')
         }
     },
+    resolveLoader: {
+        // alias: {
+        //     testLoader:path.resolve('./loaders/testLoader.js')
+        // },
+        mainFields:['main'],
+        modules: [path.resolve("node_modules"),path.resolve("loaders")]
+    },
     module:{
         //不去解析的文件
         noParse: [/lwh\.js/],
@@ -93,20 +100,20 @@ module.exports = {
                 include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
             },*/
             //解析并且正确引入打包后的图片file-loader和url-loader功能一样url多了一个转base64 功能
-            {
-                test:/\.(gif|png|jpg|svg)/,
-                use:{
-                    loader:'url-loader',
-                    options: {
-                        outputPath:'images',
-                        // publicPath:'dist/images',
-                        name:'[name].[hash:8].[ext]',
-                        limit:1024*1//小于8KB会被转成base64
-                    }
-                },
-                exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
-                include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
-            },
+            // {
+            //     test:/\.(gif|png|jpg|svg)/,
+            //     use:{
+            //         loader:'url-loader',
+            //         options: {
+            //             outputPath:'images',
+            //             // publicPath:'dist/images',
+            //             name:'[name].[hash:8].[ext]',
+            //             limit:1024*1//小于8KB会被转成base64
+            //         }
+            //     },
+            //     exclude:[path.resolve('./dist'),/node_modules/],//排除解析dist文件夹
+            //     include:[path.resolve('./src')]//只编译src文件夹 但是node_modules除外
+            // },
             //解析html页面上的img标签 但是htmlWebpackPlugin.options.title无法读取 可用express静态资源解决
             {
                 test:/\.(html|htm)/,
@@ -136,7 +143,44 @@ module.exports = {
                 // },
                 // 不设置这个会报错
                 exclude: /node_modules/
-            }
+            },
+            {
+                test:/\.(jpg|png|gif)/,
+                use: {
+                    loader: 'lwhUrlLoader',
+                    options:{
+                        filePath:'lwhImg',
+                        limit:1024*6
+                    }
+                }
+            },
+            {
+                test:/\.less/,
+                use:[
+                    'styleLoader',
+                    'cssLoader',
+                    'lessLoader'
+                ]
+            },
+            {
+                test:/\.css/,
+                use:[
+                    'styleLoader',
+                    'cssLoader'
+                ]
+            },
+            {
+                test:/\.lwh$/,
+                // use:'testLoader',
+                //这里会去找resolveLoader里的配置来找到对应的loader
+                use:[{
+                    loader: 'testLoader',
+                    options:{
+                        lwhop:'lwhtiancai'
+                    }
+                }],
+                // enforce: 'pre'//执行顺序pre->normal->inline->post
+            },
         ]
     },
     optimization: {

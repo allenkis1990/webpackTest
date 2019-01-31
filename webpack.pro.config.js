@@ -14,7 +14,12 @@ module.exports = {
                 //loader:'style-loader!css-loader'
                 //从右到左执行
                 use:[
-                    MiniCssExtractPlugin.loader,//注意这边
+                    {
+                        loader: MiniCssExtractPlugin.loader,//注意这边
+                        options: {
+                            publicPath:'../'//解决css下的图片路径错误问题
+                        }
+                    },
                     {
                         loader:'css-loader'
                     },
@@ -27,7 +32,12 @@ module.exports = {
                 test:/\.less/,
                 //loader:'style-loader!css-loader'
                 use:[
-                    MiniCssExtractPlugin.loader,//注意这边
+                    {
+                        loader: MiniCssExtractPlugin.loader,//注意这边
+                        options: {
+                            publicPath:'../'//解决css下的图片路径错误问题
+                        }
+                    },
 
                     {
                         loader:'css-loader'

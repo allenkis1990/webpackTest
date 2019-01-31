@@ -1,4 +1,5 @@
-
+let content =  require('@/needParseFiles/a1.lwh')
+// console.log(content,'666');
 import {obj} from '../services/data1.js';
 import $ from 'jquery';
 console.log('当前是否开发环境'+dev);
@@ -26,6 +27,12 @@ a().then((data)=>{
 const haha = require('haha');
 console.log(haha,'hahahehe');
 document.getElementsByTagName('p')[0].innerText = obj.name;
+
+// let img = document.createElement('img')
+// img.src = require('@/images/afei.jpg')
+// document.body.appendChild(img)
+require('../needParseFiles/style1.less');
 if(module.hot){
     module.hot.accept();
 }
+

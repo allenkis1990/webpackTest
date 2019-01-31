@@ -5,7 +5,7 @@ const webpack  = require('webpack')
 let webpackConfig = process.env.NODE_ENV === 'production' ?
     require('./webpack.pro.config') :
     require('./webpack.dev.config');
-const webpackBaseConfig = require('./webpack.base.config');
+const webpackBaseConfig = require('./webpack.sourceBase.config');
 webpackConfig.mode = 'development'
 if(process.env.NODE_ENV === 'development'){
     Object.keys(webpackBaseConfig.entry).forEach(function (name) {
