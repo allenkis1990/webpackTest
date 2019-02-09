@@ -17,6 +17,8 @@ const PurifyCSSPlugin = require('purifycss-webpack');
 const copyWebpackPlugin = require('copy-webpack-plugin');
 //const haha = require('./src/haha');//找haha文件如果没有就找哈哈文件夹package.json找main或者module配置的映射
 const Happypack = require('happypack')
+let fileListPlugin = require('./plugins/fileListPlugin')
+let inlineTagPlugin = require('./plugins/inlineTagPlugin')
 module.exports = {
     entry: {
         //main1 main2都有 jquery的
@@ -154,33 +156,33 @@ module.exports = {
                     }
                 }
             },
-            {
-                test:/\.less/,
-                use:[
-                    'styleLoader',
-                    'cssLoader',
-                    'lessLoader'
-                ]
-            },
-            {
-                test:/\.css/,
-                use:[
-                    'styleLoader',
-                    'cssLoader'
-                ]
-            },
-            {
-                test:/\.lwh$/,
-                // use:'testLoader',
-                //这里会去找resolveLoader里的配置来找到对应的loader
-                use:[{
-                    loader: 'testLoader',
-                    options:{
-                        lwhop:'lwhtiancai'
-                    }
-                }],
-                // enforce: 'pre'//执行顺序pre->normal->inline->post
-            },
+            //{
+            //    test:/\.less/,
+            //    use:[
+            //        //'styleLoader',
+            //        'cssLoader',
+            //        'lessLoader'
+            //    ]
+            //},
+            //{
+            //    test:/\.css/,
+            //    use:[
+            //        //'styleLoader',
+            //        'cssLoader'
+            //    ]
+            //},
+            //{
+            //    test:/\.lwh$/,
+            //    // use:'testLoader',
+            //    //这里会去找resolveLoader里的配置来找到对应的loader
+            //    use:[{
+            //        loader: 'testLoader',
+            //        options:{
+            //            lwhop:'lwhtiancai'
+            //        }
+            //    }],
+            //    // enforce: 'pre'//执行顺序pre->normal->inline->post
+            //},
         ]
     },
     optimization: {
@@ -239,7 +241,7 @@ module.exports = {
             filename: 'index.html',//真正输出的地址output.path+filename=./dist/index.html
             template:'./index.html',//INdex的模板
             inject: true,
-            hash:true,
+            //hash:true,
             title:'lwh-webpack-test',
             minify: {
                 removeAttributeQuotes: true, // 移除属性的引号
@@ -275,6 +277,10 @@ module.exports = {
             }],
             threads: 3,//你要开启多少个子进程去处理这一类型的文件
             verbose: true//是否要输出详细的日志 verbose
-        })
+        }),
+        new fileListPlugin({
+            fileName:'fileList.md'
+        }),
+        new inlineTagPlugin({a:'allen'})
     ]
 }
